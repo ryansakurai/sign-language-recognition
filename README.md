@@ -21,10 +21,10 @@ O programa foi feito usando a linguagem Python e as bibliotecas Keras, MediaPipe
 ![e69c8836-7f4d-4db7-b4d7-81a9681e8d63](https://github.com/ryansakurai/projeto-ia/assets/110201402/4ee41e3e-68cd-4636-b8d0-9e060e426519)
 
 ## Autores
-- Guilherme Bortoletto
-- Ryan Sakurai
-- Vinicius Castro
-- Marcelo Pirro
-- Caike Vinicius
+- [Guilherme Bortoletto](https://github.com/guilherme-bortoletto)
+- [Ryan Sakurai](https://github.com/ryansakurai)
+- [Vinicius Castro](https://github.com/vinciuscastro)
+- [Marcelo Pirro](https://github.com/marcelopirro)
+- [Caike dos Santos](https://github.com/CaikeSantos)
 
 (Estudantes de Ciência da Computação na UFSCAR)
