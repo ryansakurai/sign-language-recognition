@@ -10,30 +10,30 @@ IMG_WIDTH = 224
 IMG_HEIGHT = 224
 QT_COLOR_CHANNELS = 3
 
-model = load_model('keras_model.h5') # carrega o modelo
-capture = cv2.VideoCapture(0) # captura a webcam
-hands_obj = mp.solutions.hands.Hands(max_num_hands=1) # define o número máximo de mãos
-data_for_prediction = np.ndarray(    # cria um array para a imagem
+model = load_model('keras_model.h5')
+capture = cv2.VideoCapture(0)   # 0 -> stardard device for capture
+hands_obj = mp.solutions.hands.Hands(max_num_hands=1)
+data_for_prediction = np.ndarray(
     shape=(QT_IMAGES, IMG_WIDTH, IMG_HEIGHT, QT_COLOR_CHANNELS),
     dtype=np.float32
 )
 
 while True:
-    _, frame = capture.read() # lê o frame
-    frame = cv2.flip(frame, 1) # inverte o frame
-    frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB) # converte o frame para RGB
-    processing_results = hands_obj.process(frame_rgb) # processa o frame
+    _, frame = capture.read()
+    frame = cv2.flip(frame, 1)  # flips horizontally
+    frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    processing_results = hands_obj.process(frame_rgb)
     landmark_list_list = processing_results.multi_hand_landmarks
 
     if landmark_list_list:
-        landmark_list = landmark_list_list[0]
+        landmark_list = landmark_list_list[0]   # because the program only recognizes 1 hand
         height, width, _ = frame.shape
         x_max = -float('inf')
         y_max = -float('inf')
         x_min = float('inf')
         y_min = float('inf')
 
-        for landmark in landmark_list.landmark: # define os pontos máximos e mínimos
+        for landmark in landmark_list.landmark:
             x, y = int(landmark.x * width), int(landmark.y * height)
             if x > x_max:
                 x_max = x
@@ -43,19 +43,33 @@ while True:
                 y_max = y
             if y < y_min:
                 y_min = y
-        cv2.rectangle(frame, (x_min-50, y_min-50), (x_max+50, y_max+50), (0, 255, 0), 2) # desenha o retângulo
+        cv2.rectangle(
+            img=frame,
+            pt1=(x_min-50, y_min-50),
+            pt2=(x_max+50, y_max+50),
+            color=(0, 255, 0),
+            thickness=2
+        )
 
         try:
-            cropped_image = frame[y_min-50:y_max+50, x_min-50:x_max+50] # recorta a imagem
-            resized_image = cv2.resize(cropped_image, (224,224)) # redimensiona a imagem
-            image_array = np.asarray(resized_image) # converte a imagem para array
-            normalized_image_array = (image_array.astype(np.float32) / 127.0) - 1 # normaliza a imagem
-            data_for_prediction[0] = normalized_image_array # define a imagem para o array
-            prediction = model.predict(data_for_prediction) # faz a predição
-            predicted_class_idx = np.argmax(prediction) # define a classe com maior probabilidade
-            cv2.putText(frame, SIGN_CLASSES[predicted_class_idx], (x_min-50,y_min-65), cv2.FONT_HERSHEY_COMPLEX, 3, (0,0,255), 5) # escreve a classe
+            cropped_image = frame[y_min-50:y_max+50, x_min-50:x_max+50]
+            resized_image = cv2.resize(cropped_image, (224,224))
+            image_array = np.asarray(resized_image)
+            normalized_image_array = (image_array.astype(np.float32) / 127.0) - 1
+            data_for_prediction[0] = normalized_image_array
+            prediction = model.predict(data_for_prediction)
+            predicted_class_idx = np.argmax(prediction)
+            cv2.putText(
+                img=frame,
+                text=SIGN_CLASSES[predicted_class_idx],
+                org=(x_min-50,y_min-65),
+                fontFace=cv2.FONT_HERSHEY_COMPLEX,
+                fontScale=3,
+                color=(0,0,255),
+                thickness=5
+            )
         except:
             continue
 
-    cv2.imshow('Imagem', frame) # mostra o frame
-    cv2.waitKey(1) # espera uma tecla ser pressionada
+    cv2.imshow('Image', frame)
+    cv2.waitKey(1)  # to slow down frame output to normal rate
