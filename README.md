@@ -14,7 +14,7 @@ A project aimed at recognizing Brazilian Sign Language alphabet signs through ge
 
 ## Resources Used
 
-The program was developed using Python and the following libraries:
+The model was created using Google's Teachable Machine and the program was developed using Python and the following libraries:
 - OpenCV - video capture and manipulation;
 - MediaPipe - hand processing;
 - Keras - AI model;
